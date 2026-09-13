@@ -1,4 +1,46 @@
-.agents/
+# Dependency directories
 node_modules/
+**/node_modules/
+
+# Production build outputs
 dist/
+**/dist/
+build/
+**/build/
+*.tsbuildinfo
+
+# Environment & Local variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Cache & Temporary folders
+.vite/
+**/ .vite/
+.cache/
+.eslintcache
+.oxlintcache
+
+# Editor & OS files
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# AG Kit config
+.agents/

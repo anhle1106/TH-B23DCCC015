@@ -1,0 +1,92 @@
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.header-badge {
+  display: inline-block;
+  background-color: #dbeafe;
+  color: #1e40af;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.app-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--text-heading);
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.app-subtitle {
+  font-size: 1.0625rem;
+  color: var(--text-muted);
+}
+
+.app-main {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  flex: 1;
+}
+
+.exercise-section {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+}
+
+.section-header {
+  margin-bottom: 24px;
+}
+
+.exercise-tag {
+  display: inline-block;
+  background-color: #0f172a;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.section-header h2 {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin-bottom: 4px;
+}
+
+.section-desc {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+.app-footer {
+  text-align: center;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
