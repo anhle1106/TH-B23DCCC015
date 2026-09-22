@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { TH01App } from './TH01/TH01App';
 import { TH02App } from './TH02/TH02App';
+import { BT04App } from './BT04/BT04App';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<'TH01' | 'TH02'>('TH01');
+  const [activeTab, setActiveTab] = useState<'TH01' | 'TH02' | 'BT04'>('BT04');
 
   return (
     <div className="main-app-container">
       {/* Top Global Navigation Bar */}
-      <nav className="global-navbar" aria-label="Điều hướng bài thực hành">
+      <nav className="global-navbar" aria-label="Điều hướng bài thực hành & bài tập">
         <div className="navbar-brand">
           <span className="brand-logo">🎓</span>
           <span className="brand-title">LTWNC Labs Hub</span>
@@ -17,11 +18,19 @@ export function App() {
         <div className="navbar-tabs">
           <button
             type="button"
+            className={`nav-tab-btn ${activeTab === 'BT04' ? 'active' : ''}`}
+            onClick={() => setActiveTab('BT04')}
+          >
+            <span className="tab-indicator red" />
+            BT04: Zustand Favorites
+          </button>
+          <button
+            type="button"
             className={`nav-tab-btn ${activeTab === 'TH01' ? 'active' : ''}`}
             onClick={() => setActiveTab('TH01')}
           >
-            <span className="tab-indicator" />
-            TH01: Student Deadline Tracker
+            <span className="tab-indicator blue" />
+            TH01: Deadline Tracker
           </button>
           <button
             type="button"
@@ -35,7 +44,9 @@ export function App() {
 
       {/* Dynamic Tab Content */}
       <div className="tab-content">
-        {activeTab === 'TH01' ? <TH01App /> : <TH02App />}
+        {activeTab === 'BT04' && <BT04App />}
+        {activeTab === 'TH01' && <TH01App />}
+        {activeTab === 'TH02' && <TH02App />}
       </div>
 
       <style>{`
@@ -105,7 +116,7 @@ export function App() {
 
         .nav-tab-btn.active {
           background-color: #ffffff;
-          color: #2563eb;
+          color: #0f172a;
           font-weight: 600;
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
         }
@@ -114,6 +125,13 @@ export function App() {
           width: 6px;
           height: 6px;
           border-radius: 50%;
+        }
+
+        .tab-indicator.red {
+          background-color: #ef4444;
+        }
+
+        .tab-indicator.blue {
           background-color: #2563eb;
         }
 

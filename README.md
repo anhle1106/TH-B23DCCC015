@@ -1,6 +1,6 @@
 # Lập Trình Web Nâng Cao (LTWNC) - Học Viện Công Nghệ Bưu Chính Viễn Thông
 
-Kho lưu trữ các bài thực hành môn Lập trình Web nâng cao.
+Kho lưu trữ các bài thực hành và bài tập môn Lập trình Web nâng cao.
 
 ## Cấu Trúc Thư Mục
 
@@ -9,33 +9,40 @@ ltw/
 ├── nodejs/
 │   └── TH01/                        <-- Bài thực hành Tuần 1 (Node.js & TypeScript cơ bản)
 └── react/
-    ├── package.json                 <-- Môi trường React dùng chung (@reduxjs/toolkit, react-redux)
+    ├── package.json                 <-- @reduxjs/toolkit, react-redux, zustand
     └── src/
         ├── TH01/                    <-- BÀI THỰC HÀNH 01 (Student Deadline Tracker)
         │   ├── api/                 <-- API giả lập với createAsyncThunk
-        │   ├── components/          <-- Compound Components, Stats & Forms
-        │   │   ├── DeadlineCard/    <-- Compound Component: Header, Body, Actions
-        │   │   ├── DeadlineForm/    <-- Form thêm deadline với quick date presets
-        │   │   ├── DeadlineStats/   <-- 4 thẻ KPI tương tác (Click đổi filter)
-        │   │   └── FilterTabs/      <-- Tabs lọc trạng thái + Search bar
-        │   ├── features/            <-- Redux Toolkit Slice (Feature-based)
-        │   ├── hooks/               <-- Custom Hook nâng cao (useDeadlineCountdown)
+        │   ├── components/          <-- Compound Component (DeadlineCard), Form, Stats, FilterTabs
+        │   ├── features/            <-- Redux Toolkit Slice
+        │   ├── hooks/               <-- Custom Hook (useDeadlineCountdown)
         │   ├── store/               <-- Typed Redux Store & Hooks
-        │   ├── types/               <-- TypeScript nâng cao (Generics, Utility Types, Type Guards)
-        │   ├── TH01App.tsx          <-- Main Component TH01
-        │   └── TH01App.css
-        ├── TH02/                    <-- BÀI THỰC HÀNH 02 (Accordion & usePagination)
-        ├── App.tsx                  <-- Navigation Hub cho phép chuyển đổi nhanh TH01 / TH02
+        │   ├── types/               <-- TypeScript Nâng Cao (Generics, Utility Types, Type Guards)
+        │   └── TH01App.tsx
+        ├── TH02/                    <-- BÀI THỰC HÀNH 02 (Accordion Compound Component & usePagination)
+        ├── BT04/                    <-- BÀI TẬP TUẦN 4 (Zustand Store - Sản Phẩm Yêu Thích)
+        │   ├── components/          <-- FavoritesDrawer, ComparisonCard
+        │   ├── store/               <-- favoritesStore.ts (Zustand + Persist middleware)
+        │   ├── BT04App.tsx
+        │   └── BT04App.css
+        ├── App.tsx                  <-- Navigation Hub chuyển đổi linh hoạt TH01 / TH02 / BT04
         └── main.tsx
 ```
 
-## Bảng Đối Soát Yêu Cầu Kỹ Thuật (TH01 - Student Deadline Tracker)
+---
 
-| Buổi Học | Yêu Cầu Đề Bài | Triển Khai Thực Tế |
-| :--- | :--- | :--- |
-| **Buổi 1 — TypeScript Nâng Cao** | • Generic<br>• Utility types<br>• Type guard | • `ApiResponse<T>`, `filterItems<T>`<br>• `Pick`, `Omit`, `Partial`, `Record` (`CreateDeadlineDTO`, `UpdateDeadlineDTO`, `PRIORITY_MAP`)<br>• `isPriority()`, `isDeadline()`, `isDeadlineOverdue()` |
-| **Buổi 2 — React Design Pattern** | • Custom hook nâng cao<br>• Compound Component / HOC | • `useDeadlineCountdown()`: Tính ngày còn lại / quá hạn, urgency status<br>• `DeadlineCard`: Compound Component Pattern (`DeadlineCard.Header`, `DeadlineCard.Body`, `DeadlineCard.Actions`) |
-| **Buổi 3 — Redux Toolkit + TS** | • Feature-based structure<br>• Typed hooks<br>• `createAsyncThunk` | • `src/TH01/features/deadlines/deadlinesSlice.ts`<br>• `useAppDispatch`, `useAppSelector` chuẩn typed hooks<br>• `fetchInitialDeadlines` giả lập call API nạp dữ liệu ban đầu |
+## 📌 Bài Tập Tuần 4 — Zustand (Sản Phẩm Yêu Thích - BT04)
+
+- **Cài đặt**: Zustand store riêng (`favoritesStore`) tại `src/BT04/store/favoritesStore.ts`.
+- **Tính năng**:
+  - Thêm / bỏ 1 sản phẩm khỏi danh sách yêu thích (`toggleFavorite`).
+  - Lưu trữ bền vững (`persist` middleware với `localStorage`).
+  - Lọc nhanh "Tất cả sản phẩm" vs "Chỉ xem yêu thích".
+  - Drawer danh sách yêu thích, hiển thị tổng tiền và hỗ trợ xoá tất cả.
+- **Đoạn nhận xét so sánh Zustand vs Redux Toolkit (5–7 dòng nộp bài)**:
+  > *"Lựa chọn Zustand store (favoritesStore) mang lại ưu điểm vượt trội về sự tinh gọn: cấu hình cực nhanh mà không cần boilerplate phức tạp (không cần Slice, Reducer, Action Types hay Provider bọc ngoài component root), đồng thời kích thước bundle siêu nhẹ (~1KB). Nhờ cơ chế selector-based hook, Zustand chỉ kích hoạt re-render đối với đúng component đăng ký slice dữ liệu thay đổi, tối ưu hiệu năng vượt trội so với React Context thông thường. So với Redux Toolkit, nhược điểm của Zustand là hệ sinh thái middleware chưa phong phú bằng (thiếu RTK Query cho data fetching nâng cao) và luồng quản lý dữ liệu linh hoạt, ít tính kỷ luật hơn khi áp dụng vào các dự án Enterprise quy mô lớn. Tuy nhiên, với bài toán quản lý client-state độc lập và vừa phải như "Sản phẩm yêu thích", Zustand là lựa chọn tối ưu hàng đầu về cả hiệu năng lẫn trải nghiệm phát triển (Developer Experience)."*
+
+---
 
 ## Hướng Dẫn Chạy Dự Án
 
