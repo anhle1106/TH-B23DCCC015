@@ -1,0 +1,124 @@
+/* Filter and Search Bar */
+
+.filter-search-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.tabs-container {
+  display: flex;
+  align-items: center;
+  background-color: #f1f5f9;
+  padding: 0.25rem;
+  border-radius: 10px;
+  gap: 0.25rem;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.filter-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
+  padding: 0.5rem 0.875rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.filter-tab:hover {
+  color: #0f172a;
+}
+
+.filter-tab.is-active {
+  background-color: #ffffff;
+  color: #0f172a;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.tab-counter {
+  font-size: 0.75rem;
+  background-color: #e2e8f0;
+  color: #475569;
+  padding: 0.125rem 0.4375rem;
+  border-radius: 9999px;
+  font-weight: 600;
+}
+
+.filter-tab.is-active .tab-counter {
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+
+.tab-counter.counter-overdue {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+/* Search Box */
+.search-box {
+  display: flex;
+  align-items: center;
+  position: relative;
+  min-width: 260px;
+  flex-grow: 0.5;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.875rem;
+  width: 16px;
+  height: 16px;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.5625rem 2.25rem 0.5625rem 2.375rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  background-color: #ffffff;
+  color: #0f172a;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.search-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.search-input::placeholder {
+  color: #94a3b8;
+}
+
+.btn-clear-search {
+  position: absolute;
+  right: 0.75rem;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0.25rem;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-clear-search:hover {
+  color: #0f172a;
+}
