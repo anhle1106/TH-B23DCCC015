@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { TH01App } from './TH01/TH01App';
 import { TH02App } from './TH02/TH02App';
+import { BT03App } from './BT03/BT03App';
 import { BT04App } from './BT04/BT04App';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<'TH01' | 'TH02' | 'BT04'>('BT04');
+  const [activeTab, setActiveTab] = useState<'BT03' | 'BT04' | 'TH01' | 'TH02'>('BT03');
 
   return (
     <div className="main-app-container">
@@ -16,6 +17,14 @@ export function App() {
         </div>
 
         <div className="navbar-tabs">
+          <button
+            type="button"
+            className={`nav-tab-btn ${activeTab === 'BT03' ? 'active' : ''}`}
+            onClick={() => setActiveTab('BT03')}
+          >
+            <span className="tab-indicator purple" />
+            BT03: Redux Cart
+          </button>
           <button
             type="button"
             className={`nav-tab-btn ${activeTab === 'BT04' ? 'active' : ''}`}
@@ -44,6 +53,7 @@ export function App() {
 
       {/* Dynamic Tab Content */}
       <div className="tab-content">
+        {activeTab === 'BT03' && <BT03App />}
         {activeTab === 'BT04' && <BT04App />}
         {activeTab === 'TH01' && <TH01App />}
         {activeTab === 'TH02' && <TH02App />}
@@ -93,6 +103,7 @@ export function App() {
           padding: 0.25rem;
           border-radius: 8px;
           gap: 0.25rem;
+          overflow-x: auto;
         }
 
         .nav-tab-btn {
@@ -108,6 +119,7 @@ export function App() {
           display: flex;
           align-items: center;
           gap: 0.375rem;
+          white-space: nowrap;
         }
 
         .nav-tab-btn:hover {
@@ -127,6 +139,10 @@ export function App() {
           border-radius: 50%;
         }
 
+        .tab-indicator.purple {
+          background-color: #8b5cf6;
+        }
+
         .tab-indicator.red {
           background-color: #ef4444;
         }
@@ -135,7 +151,7 @@ export function App() {
           background-color: #2563eb;
         }
 
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
           .global-navbar {
             flex-direction: column;
             gap: 0.75rem;

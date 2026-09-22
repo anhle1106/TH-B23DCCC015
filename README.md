@@ -20,27 +20,42 @@ ltw/
         │   ├── types/               <-- TypeScript Nâng Cao (Generics, Utility Types, Type Guards)
         │   └── TH01App.tsx
         ├── TH02/                    <-- BÀI THỰC HÀNH 02 (Accordion Compound Component & usePagination)
+        ├── BT03/                    <-- BÀI TẬP TUẦN 3 (Module Giỏ Hàng Redux Toolkit)
+        │   ├── app/                 <-- store.ts & hooks.ts (Typed useAppDispatch, useAppSelector)
+        │   ├── features/
+        │   │   ├── products/        <-- productsSlice.ts (createAsyncThunk fetchProducts)
+        │   │   └── cart/            <-- cartSlice.ts (addToCart, removeFromCart, updateQuantity, clearCart)
+        │   ├── api/                 <-- mockProductsApi.ts
+        │   ├── components/          <-- CartDrawer, ProductCard, SubmissionNote
+        │   ├── BT03App.tsx
+        │   └── BT03App.css
         ├── BT04/                    <-- BÀI TẬP TUẦN 4 (Zustand Store - Sản Phẩm Yêu Thích)
         │   ├── components/          <-- FavoritesDrawer, ComparisonCard
         │   ├── store/               <-- favoritesStore.ts (Zustand + Persist middleware)
         │   ├── BT04App.tsx
         │   └── BT04App.css
-        ├── App.tsx                  <-- Navigation Hub chuyển đổi linh hoạt TH01 / TH02 / BT04
+        ├── App.tsx                  <-- Navigation Hub chuyển đổi linh hoạt TH01 / TH02 / BT03 / BT04
         └── main.tsx
 ```
+
+---
+
+## 📌 Bài Tập Tuần 3 — Redux Toolkit (Module Giỏ Hàng - BT03)
+
+- **Cấu trúc chuẩn Feature-Based**:
+  - `features/products/productsSlice.ts`: Quản lý danh sách sản phẩm, `createAsyncThunk ('products/fetchProducts')` lấy dữ liệu từ mock API.
+  - `features/cart/cartSlice.ts`: Thêm, xoá, cập nhật số lượng `updateQuantity`, kiểm soát tồn kho (`stock`), tính tổng tiền và tổng số lượng.
+  - `app/store.ts` & `app/hooks.ts`: Cung cấp `useAppDispatch` và `useAppSelector` đã gõ kiểu đầy đủ cho toàn bộ components.
+- **Tính năng & Giao diện**:
+  - Grid sản phẩm công nghệ hiện đại.
+  - Drawer giỏ hàng trượt thông minh, cập nhật số lượng realtime, nút thanh toán giả lập.
 
 ---
 
 ## 📌 Bài Tập Tuần 4 — Zustand (Sản Phẩm Yêu Thích - BT04)
 
 - **Cài đặt**: Zustand store riêng (`favoritesStore`) tại `src/BT04/store/favoritesStore.ts`.
-- **Tính năng**:
-  - Thêm / bỏ 1 sản phẩm khỏi danh sách yêu thích (`toggleFavorite`).
-  - Lưu trữ bền vững (`persist` middleware với `localStorage`).
-  - Lọc nhanh "Tất cả sản phẩm" vs "Chỉ xem yêu thích".
-  - Drawer danh sách yêu thích, hiển thị tổng tiền và hỗ trợ xoá tất cả.
-- **Đoạn nhận xét so sánh Zustand vs Redux Toolkit (5–7 dòng nộp bài)**:
-  > *"Lựa chọn Zustand store (favoritesStore) mang lại ưu điểm vượt trội về sự tinh gọn: cấu hình cực nhanh mà không cần boilerplate phức tạp (không cần Slice, Reducer, Action Types hay Provider bọc ngoài component root), đồng thời kích thước bundle siêu nhẹ (~1KB). Nhờ cơ chế selector-based hook, Zustand chỉ kích hoạt re-render đối với đúng component đăng ký slice dữ liệu thay đổi, tối ưu hiệu năng vượt trội so với React Context thông thường. So với Redux Toolkit, nhược điểm của Zustand là hệ sinh thái middleware chưa phong phú bằng (thiếu RTK Query cho data fetching nâng cao) và luồng quản lý dữ liệu linh hoạt, ít tính kỷ luật hơn khi áp dụng vào các dự án Enterprise quy mô lớn. Tuy nhiên, với bài toán quản lý client-state độc lập và vừa phải như "Sản phẩm yêu thích", Zustand là lựa chọn tối ưu hàng đầu về cả hiệu năng lẫn trải nghiệm phát triển (Developer Experience)."*
+- **Tính năng**: Thêm / bỏ sản phẩm yêu thích (`toggleFavorite`), lưu bền vững qua `persist` middleware, Drawer danh sách yêu thích, đoạn nhận xét 5–7 dòng so sánh với Redux Toolkit.
 
 ---
 
