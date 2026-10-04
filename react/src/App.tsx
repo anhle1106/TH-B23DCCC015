@@ -3,9 +3,10 @@ import { TH01App } from './TH01/TH01App';
 import { TH02App } from './TH02/TH02App';
 import { BT03App } from './BT03/BT03App';
 import { BT04App } from './BT04/BT04App';
+import { BT05App } from './BT05/BT05App';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<'BT03' | 'BT04' | 'TH01' | 'TH02'>('BT03');
+  const [activeTab, setActiveTab] = useState<'BT05' | 'BT04' | 'BT03' | 'TH01' | 'TH02'>('BT05');
 
   return (
     <div className="main-app-container">
@@ -19,11 +20,11 @@ export function App() {
         <div className="navbar-tabs">
           <button
             type="button"
-            className={`nav-tab-btn ${activeTab === 'BT03' ? 'active' : ''}`}
-            onClick={() => setActiveTab('BT03')}
+            className={`nav-tab-btn ${activeTab === 'BT05' ? 'active' : ''}`}
+            onClick={() => setActiveTab('BT05')}
           >
-            <span className="tab-indicator purple" />
-            BT03: Redux Cart
+            <span className="tab-indicator green" />
+            BT05: Tối Ưu React (10k items)
           </button>
           <button
             type="button"
@@ -32,6 +33,14 @@ export function App() {
           >
             <span className="tab-indicator red" />
             BT04: Zustand Favorites
+          </button>
+          <button
+            type="button"
+            className={`nav-tab-btn ${activeTab === 'BT03' ? 'active' : ''}`}
+            onClick={() => setActiveTab('BT03')}
+          >
+            <span className="tab-indicator purple" />
+            BT03: Redux Cart
           </button>
           <button
             type="button"
@@ -53,8 +62,9 @@ export function App() {
 
       {/* Dynamic Tab Content */}
       <div className="tab-content">
-        {activeTab === 'BT03' && <BT03App />}
+        {activeTab === 'BT05' && <BT05App />}
         {activeTab === 'BT04' && <BT04App />}
+        {activeTab === 'BT03' && <BT03App />}
         {activeTab === 'TH01' && <TH01App />}
         {activeTab === 'TH02' && <TH02App />}
       </div>
@@ -137,6 +147,10 @@ export function App() {
           width: 6px;
           height: 6px;
           border-radius: 50%;
+        }
+
+        .tab-indicator.green {
+          background-color: #10b981;
         }
 
         .tab-indicator.purple {
