@@ -16,6 +16,8 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-redux": "^9.3.0",
+    "react-window": "^2.3.4",
+    "redux-logger": "^3.0.6",
     "zustand": "^5.0.15"
   },
   "devDependencies": {
@@ -26,6 +28,7 @@
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
+    "@types/redux-logger": "^3.0.13",
     "@vitejs/plugin-react": "^6.1.1",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^30.5.2",

@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 import type { CreateDeadlineDTO, Deadline, FilterStatus } from '../../types/deadline.types';
-import { isDeadlineOverdue } from '../../types/deadline.types';
+import { isOverdue, generateMockAssignments } from '../../utils/deadlineHelpers';
 import { mockDeadlinesApi } from '../../api/mockDeadlinesApi';
 import type { RootState } from '../../store';
 
 /**
  * ============================================================================
- * BUỔI 3: REDUX TOOLKIT + TYPESCRIPT (FEATURE-BASED STRUCTURE)
+ * REDUX TOOLKIT: DEADLINES / ASSIGNMENTS SLICE (TH01 & TH02)
  * ============================================================================
  */
 
@@ -18,7 +18,7 @@ export interface DeadlinesState {
   error: string | null;
 }
 
-const initialState: DeadlinesState = {
+export const initialState: DeadlinesState = {
   items: [],
   status: 'idle',
   filter: 'all',
@@ -27,7 +27,7 @@ const initialState: DeadlinesState = {
 };
 
 /**
- * Yêu cầu 7: createAsyncThunk nạp danh sách ban đầu từ API giả lập
+ * Async Thunk: Nạp danh sách bài tập ban đầu từ mock API
  */
 export const fetchInitialDeadlines = createAsyncThunk(
   'deadlines/fetchInitialDeadlines',
@@ -47,10 +47,10 @@ export const deadlinesSlice = createSlice({
   name: 'deadlines',
   initialState,
   reducers: {
-    /** Yêu cầu 2: Thêm bài tập mới */
+    /** Thêm bài tập mới */
     addDeadline: (state, action: PayloadAction<CreateDeadlineDTO>) => {
       const newDeadline: Deadline = {
-        id: `dl-${Date.now()}`,
+        id: `dl-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
         ...action.payload,
         isCompleted: false,
         createdAt: new Date().toISOString(),
@@ -58,7 +58,7 @@ export const deadlinesSlice = createSlice({
       state.items.unshift(newDeadline);
     },
 
-    /** Yêu cầu 3: Đánh dấu hoàn thành / bỏ đánh dấu */
+    /** Đánh dấu hoàn thành / bỏ hoàn thành */
     toggleDeadline: (state, action: PayloadAction<string>) => {
       const target = state.items.find((item) => item.id === action.payload);
       if (target) {
@@ -66,19 +66,37 @@ export const deadlinesSlice = createSlice({
       }
     },
 
-    /** Yêu cầu 4: Xoá bài tập */
+    /** Xoá bài tập */
     deleteDeadline: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter((item) => item.id !== action.payload);
     },
 
-    /** Yêu cầu 5: Lọc theo trạng thái */
+    /** Đặt bộ lọc trạng thái (all, pending, overdue, completed) */
     setFilter: (state, action: PayloadAction<FilterStatus>) => {
       state.filter = action.payload;
     },
 
-    /** Tìm kiếm theo từ khoá môn học hoặc tên bài */
+    /** Đặt từ khoá tìm kiếm */
     setSearchQuery: (state, action: PayloadAction<string>) => {
       state.searchQuery = action.payload;
+    },
+
+    /** Gán toàn bộ danh sách bài tập */
+    setDeadlines: (state, action: PayloadAction<Deadline[]>) => {
+      state.items = action.payload;
+      state.status = 'succeeded';
+    },
+
+    /** PHẦN B: Chế độ Stress Test - Sinh 10.000 bài tập mẫu */
+    generateStressDeadlines: (state, action: PayloadAction<number | undefined>) => {
+      const count = action.payload ?? 10000;
+      state.items = generateMockAssignments(count);
+      state.status = 'succeeded';
+    },
+
+    /** Xoá toàn bộ bài tập (tiện cho test / reset) */
+    clearAllDeadlines: (state) => {
+      state.items = [];
     },
   },
   extraReducers: (builder) => {
@@ -104,23 +122,31 @@ export const {
   deleteDeadline,
   setFilter,
   setSearchQuery,
+  setDeadlines,
+  generateStressDeadlines,
+  clearAllDeadlines,
 } = deadlinesSlice.actions;
+
+// Compatibility alias for assignments
+export const assignmentsSlice = deadlinesSlice;
+export const assignmentsReducer = deadlinesSlice.reducer;
 
 // Selectors
 export const selectAllDeadlines = (state: RootState) => state.deadlines.items;
 export const selectDeadlinesStatus = (state: RootState) => state.deadlines.status;
 export const selectDeadlinesFilter = (state: RootState) => state.deadlines.filter;
 export const selectDeadlinesSearch = (state: RootState) => state.deadlines.searchQuery;
+export const selectDeadlinesError = (state: RootState) => state.deadlines.error;
 
 /**
- * Selector lọc danh sách theo FilterStatus và SearchQuery
+ * Selector lọc danh sách bài tập theo FilterStatus và SearchQuery
  */
 export const selectFilteredDeadlines = (state: RootState): Deadline[] => {
   const { items, filter, searchQuery } = state.deadlines;
   const query = searchQuery.trim().toLowerCase();
 
   return items.filter((item) => {
-    // 1. Kiểm tra lọc theo từ khóa tìm kiếm
+    // 1. Lọc theo từ khoá
     const matchSearch =
       query === '' ||
       item.title.toLowerCase().includes(query) ||
@@ -128,8 +154,8 @@ export const selectFilteredDeadlines = (state: RootState): Deadline[] => {
 
     if (!matchSearch) return false;
 
-    // 2. Kiểm tra lọc theo trạng thái
-    const overdue = isDeadlineOverdue(item.dueDate, item.isCompleted);
+    // 2. Lọc theo trạng thái
+    const overdue = isOverdue(item.dueDate, item.isCompleted);
 
     switch (filter) {
       case 'completed':
@@ -146,7 +172,7 @@ export const selectFilteredDeadlines = (state: RootState): Deadline[] => {
 };
 
 /**
- * Selector tính toán thống kê số lượng bài tập theo các nhóm
+ * Selector tính toán thống kê tổng quan
  */
 export const selectDeadlinesStats = (state: RootState) => {
   const items = state.deadlines.items;
@@ -155,11 +181,12 @@ export const selectDeadlinesStats = (state: RootState) => {
   let overdue = 0;
   let completed = 0;
 
-  for (const item of items) {
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
     total++;
     if (item.isCompleted) {
       completed++;
-    } else if (isDeadlineOverdue(item.dueDate, item.isCompleted)) {
+    } else if (isOverdue(item.dueDate, item.isCompleted)) {
       overdue++;
     } else {
       pending++;

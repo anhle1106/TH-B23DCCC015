@@ -6,7 +6,7 @@ import { BT04App } from './BT04/BT04App';
 import { BT05App } from './BT05/BT05App';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<'BT05' | 'BT04' | 'BT03' | 'TH01' | 'TH02'>('BT05');
+  const [activeTab, setActiveTab] = useState<'TH01' | 'BT05' | 'BT04' | 'BT03' | 'TH02'>('TH01');
 
   return (
     <div className="main-app-container">
@@ -18,6 +18,14 @@ export function App() {
         </div>
 
         <div className="navbar-tabs">
+          <button
+            type="button"
+            className={`nav-tab-btn ${activeTab === 'TH01' ? 'active' : ''}`}
+            onClick={() => setActiveTab('TH01')}
+          >
+            <span className="tab-indicator blue" />
+            ⭐ TH02: Student Deadline Tracker (N2)
+          </button>
           <button
             type="button"
             className={`nav-tab-btn ${activeTab === 'BT05' ? 'active' : ''}`}
@@ -44,18 +52,10 @@ export function App() {
           </button>
           <button
             type="button"
-            className={`nav-tab-btn ${activeTab === 'TH01' ? 'active' : ''}`}
-            onClick={() => setActiveTab('TH01')}
-          >
-            <span className="tab-indicator blue" />
-            TH01: Deadline Tracker
-          </button>
-          <button
-            type="button"
             className={`nav-tab-btn ${activeTab === 'TH02' ? 'active' : ''}`}
             onClick={() => setActiveTab('TH02')}
           >
-            TH02: Component Patterns
+            Tuần 2: Component Patterns
           </button>
         </div>
       </nav>

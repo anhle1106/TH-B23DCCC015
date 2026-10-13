@@ -28,12 +28,18 @@ module.exports = {
     '<rootDir>/src/**/*.{spec,test}.{ts,tsx}',
   ],
   collectCoverageFrom: [
-    'src/BT03/features/**/*.{ts,tsx}',
-    'src/BT03/components/**/*.{ts,tsx}',
-    'src/BT03/api/**/*.{ts,tsx}',
-    '!src/BT03/**/*.d.ts',
-    '!src/BT03/types/**',
-    '!src/BT03/components/SubmissionNote/**',
+    'src/TH01/features/**/*.{ts,tsx}',
+    'src/TH01/utils/**/*.{ts,tsx}',
+    'src/TH01/hooks/**/*.{ts,tsx}',
+    '!src/**/*.d.ts',
   ],
+  coverageThreshold: {
+    './src/TH01/features/': {
+      statements: 70,
+      branches: 60,
+      functions: 70,
+      lines: 70,
+    },
+  },
   coverageReporters: ['text', 'text-summary', 'lcov', 'html'],
 };

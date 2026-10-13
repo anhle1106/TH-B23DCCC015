@@ -20,6 +20,32 @@
   border-color: #cbd5e1;
 }
 
+/* Biến thể đã ghim lên đầu */
+.deadline-card.is-pinned {
+  border-color: #f59e0b;
+  box-shadow: 0 4px 14px -1px rgba(245, 158, 11, 0.16);
+  background: linear-gradient(180deg, #fffdfa 0%, #ffffff 100%);
+}
+
+.pinned-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #b45309;
+  background-color: #fef3c7;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  width: fit-content;
+  letter-spacing: 0.02em;
+}
+
+.pinned-banner svg {
+  width: 12px;
+  height: 12px;
+}
+
 /* Biến thể quá hạn: viền trái màu đỏ nổi bật */
 .deadline-card.is-overdue {
   border-left: 4px solid #ef4444;
@@ -242,12 +268,6 @@
   border-color: #10b981;
 }
 
-.check-icon {
-  width: 14px;
-  height: 14px;
-  color: #ffffff;
-}
-
 .btn-delete {
   display: inline-flex;
   align-items: center;
@@ -271,4 +291,85 @@
 .trash-icon {
   width: 15px;
   height: 15px;
+}
+
+.btn-pin {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  padding: 0.4rem 0.65rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.btn-pin:hover {
+  background-color: #fef3c7;
+  border-color: #fcd34d;
+  color: #b45309;
+}
+
+.btn-pin.is-pinned-active {
+  background-color: #fef3c7;
+  border-color: #f59e0b;
+  color: #b45309;
+  font-weight: 600;
+}
+
+.pin-icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* Dark Theme Support */
+[data-theme='dark'] .deadline-card {
+  background-color: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme='dark'] .deadline-card:hover {
+  border-color: #475569;
+}
+
+[data-theme='dark'] .deadline-card.is-pinned {
+  border-color: #d97706;
+  background: linear-gradient(180deg, #24221b 0%, #1e293b 100%);
+}
+
+[data-theme='dark'] .task-title {
+  color: #f1f5f9;
+}
+
+[data-theme='dark'] .task-title-completed {
+  color: #64748b;
+}
+
+[data-theme='dark'] .btn-toggle-status,
+[data-theme='dark'] .btn-pin {
+  border-color: #334155;
+  color: #94a3b8;
+  background-color: #0f172a;
+}
+
+[data-theme='dark'] .btn-toggle-status:hover,
+[data-theme='dark'] .btn-pin:hover {
+  background-color: #1e293b;
+  color: #f8fafc;
+}
+
+[data-theme='dark'] .btn-completed {
+  background-color: #064e3b;
+  border-color: #059669;
+  color: #a7f3d0;
+}
+
+[data-theme='dark'] .urgency-normal {
+  background-color: #334155;
+  color: #e2e8f0;
 }

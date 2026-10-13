@@ -98,17 +98,4 @@ export function isDeadline(item: unknown): item is Deadline {
   );
 }
 
-/**
- * Type-safe helper xác định xem bài tập đã bị quá hạn hay chưa
- */
-export function isDeadlineOverdue(dueDate: string, isCompleted: boolean): boolean {
-  if (isCompleted) return false;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const [year, month, day] = dueDate.split('-').map(Number);
-  const targetDate = new Date(year, month - 1, day);
-  targetDate.setHours(0, 0, 0, 0);
-
-  return targetDate.getTime() < today.getTime();
-}
+export { isOverdue, calcDaysLeft, calcStats, isDeadlineOverdue } from '../utils/deadlineHelpers';

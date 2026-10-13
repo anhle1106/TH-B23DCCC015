@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useCallback, Suspense, lazy } from 'react';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import { useAppDispatch, useAppSelector } from './store/hooks';
@@ -8,69 +8,191 @@ import {
   toggleDeadline,
   deleteDeadline,
   setFilter,
-  setSearchQuery,
-  selectFilteredDeadlines,
+  generateStressDeadlines,
+  selectAllDeadlines,
   selectDeadlinesStatus,
   selectDeadlinesFilter,
-  selectDeadlinesSearch,
-  selectDeadlinesStats,
+  selectDeadlinesError,
 } from './features/deadlines/deadlinesSlice';
 import type { CreateDeadlineDTO, FilterStatus } from './types/deadline.types';
-import { DeadlineCard } from './components/DeadlineCard/DeadlineCard';
+import { isOverdue, calcStats } from './utils/deadlineHelpers';
+import { usePinStore } from './store/usePinStore';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { useDebounce } from './hooks/useDebounce';
 import { DeadlineStats } from './components/DeadlineStats/DeadlineStats';
 import { FilterTabs } from './components/FilterTabs/FilterTabs';
 import { DeadlineForm } from './components/DeadlineForm/DeadlineForm';
+import { AssignmentList } from './components/AssignmentList/AssignmentList';
+import { BenchmarkModal } from './components/BenchmarkModal/BenchmarkModal';
 import './TH01App.css';
 
+/**
+ * ============================================================================
+ * PHẦN B: KỸ THUẬT 4 - CODE-SPLITTING VỚI REACT.LAZY & SUSPENSE
+ * ============================================================================
+ * Tách trang Thống kê chi tiết thành chunk riêng biệt, chỉ tải khi cần thiết
+ */
+const LazyStatsPage = lazy(() => import('./components/StatsPage/StatsPage'));
+
+function StatsLoadingFallback() {
+  return (
+    <div className="deadline-skeleton-card" style={{ padding: '3rem', textAlign: 'center' }}>
+      <div className="skeleton-line skeleton-title" style={{ margin: '0 auto 1rem auto' }} />
+      <div className="skeleton-line skeleton-meta" style={{ margin: '0 auto' }} />
+      <p style={{ color: '#64748b', marginTop: '1rem', fontWeight: 600 }}>
+        ⏳ Đang tải mô-đun Báo cáo Thống kê qua React.lazy &amp; Suspense...
+      </p>
+    </div>
+  );
+}
+
+/**
+ * Content Component bên trong Redux Provider & ThemeProvider
+ */
 function DeadlineTrackerContent() {
   const dispatch = useAppDispatch();
+  const allDeadlines = useAppSelector(selectAllDeadlines);
   const status = useAppSelector(selectDeadlinesStatus);
   const filter = useAppSelector(selectDeadlinesFilter);
-  const searchQuery = useAppSelector(selectDeadlinesSearch);
-  const filteredDeadlines = useAppSelector(selectFilteredDeadlines);
-  const stats = useAppSelector(selectDeadlinesStats);
+  const error = useAppSelector(selectDeadlinesError);
 
+  // PHẦN A: Context nâng cao - Theme sáng/tối
+  const { theme, toggleTheme } = useTheme();
+
+  // PHẦN A: Quản lý ghim bằng Zustand usePinStore
+  const pinnedIds = usePinStore((state) => state.pinnedIds);
+  const togglePin = usePinStore((state) => state.togglePin);
+
+  // UI Local States
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isBenchmarkOpen, setIsBenchmarkOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'list' | 'stats'>('list');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Yêu cầu 7: Khi khởi động app, nạp dữ liệu mẫu ban đầu từ API giả lập qua createAsyncThunk
-  useEffect(() => {
-    dispatch(fetchInitialDeadlines());
-  }, [dispatch]);
+  // PHẦN B: Kỹ thuật 2 - useDebounce (300ms) cho ô tìm kiếm
+  const [searchInput, setSearchInput] = useState('');
+  const debouncedSearchQuery = useDebounce(searchInput, 300);
 
-  const showToast = (msg: string) => {
+  // PHẦN B: Kỹ thuật 3 - Virtualization bằng react-window (tự động bật khi >= 50 bài hoặc có thể toggle)
+  const [forceVirtualization, setForceVirtualization] = useState<boolean | null>(null);
+  const isVirtualizationActive =
+    forceVirtualization !== null ? forceVirtualization : allDeadlines.length >= 50;
+
+  // Nạp 5 bài tập mẫu ban đầu qua createAsyncThunk khi khởi động app
+  useEffect(() => {
+    if (allDeadlines.length === 0 && status === 'idle') {
+      dispatch(fetchInitialDeadlines());
+    }
+  }, [dispatch, allDeadlines.length, status]);
+
+  const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
     setTimeout(() => {
       setToastMessage(null);
     }, 3000);
-  };
+  }, []);
 
-  // Handlers
-  const handleToggle = (id: string) => {
-    dispatch(toggleDeadline(id));
-  };
+  // PHẦN B: Kỹ thuật 1 - useCallback cho các handlers truyền xuống component con
+  const handleToggle = useCallback(
+    (id: string) => {
+      dispatch(toggleDeadline(id));
+    },
+    [dispatch]
+  );
 
-  const handleDelete = (id: string) => {
-    dispatch(deleteDeadline(id));
-    showToast('Đã xoá bài tập thành công');
-  };
+  const handleDelete = useCallback(
+    (id: string) => {
+      dispatch(deleteDeadline(id));
+      showToast('Đã xoá bài tập thành công');
+    },
+    [dispatch, showToast]
+  );
 
-  const handleCreate = (data: CreateDeadlineDTO) => {
-    dispatch(addDeadline(data));
-    showToast(`Đã thêm bài tập "${data.title}" thành công!`);
-  };
+  const handleTogglePin = useCallback(
+    (id: string) => {
+      togglePin(id);
+      const isNowPinned = !pinnedIds.includes(id);
+      showToast(isNowPinned ? '📌 Đã ghim bài tập lên đầu danh sách' : 'Đã bỏ ghim bài tập');
+    },
+    [togglePin, pinnedIds, showToast]
+  );
 
-  const handleFilterChange = (newFilter: FilterStatus) => {
-    dispatch(setFilter(newFilter));
-  };
+  const handleCreate = useCallback(
+    (data: CreateDeadlineDTO) => {
+      dispatch(addDeadline(data));
+      showToast(`Đã thêm bài tập "${data.title}" thành công!`);
+    },
+    [dispatch, showToast]
+  );
 
-  const handleSearchChange = (query: string) => {
-    dispatch(setSearchQuery(query));
-  };
+  const handleFilterChange = useCallback(
+    (newFilter: FilterStatus) => {
+      dispatch(setFilter(newFilter));
+    },
+    [dispatch]
+  );
+
+  const handleSearchChange = useCallback((query: string) => {
+    setSearchInput(query);
+  }, []);
+
+  // Sinh 10.000 bài tập mẫu để stress test
+  const handleGenerateStressTest = useCallback(() => {
+    dispatch(generateStressDeadlines(10000));
+    showToast('🚀 Đã sinh thành công 10.000 bài tập mẫu!');
+  }, [dispatch, showToast]);
+
+  const handleResetToDefaults = useCallback(() => {
+    dispatch(fetchInitialDeadlines());
+    showToast('↺ Đã khôi phục danh sách bài tập mẫu ban đầu');
+  }, [dispatch, showToast]);
+
+  // PHẦN B: Kỹ thuật 2 - useMemo cho phần lọc và ghim (Pinned luôn lên đầu)
+  const processedDeadlines = useMemo(() => {
+    const query = debouncedSearchQuery.trim().toLowerCase();
+
+    // 1. Lọc theo từ khoá và bộ lọc trạng thái
+    const filtered = allDeadlines.filter((item) => {
+      const matchSearch =
+        query === '' ||
+        item.title.toLowerCase().includes(query) ||
+        item.subject.toLowerCase().includes(query);
+
+      if (!matchSearch) return false;
+
+      const overdue = isOverdue(item.dueDate, item.isCompleted);
+
+      switch (filter) {
+        case 'completed':
+          return item.isCompleted;
+        case 'overdue':
+          return !item.isCompleted && overdue;
+        case 'pending':
+          return !item.isCompleted && !overdue;
+        case 'all':
+        default:
+          return true;
+      }
+    });
+
+    // 2. Bài tập đã ghim luôn hiện lên đầu danh sách
+    return filtered.sort((a, b) => {
+      const aPinned = pinnedIds.includes(a.id);
+      const bPinned = pinnedIds.includes(b.id);
+      if (aPinned && !bPinned) return -1;
+      if (!aPinned && bPinned) return 1;
+      return 0;
+    });
+  }, [allDeadlines, debouncedSearchQuery, filter, pinnedIds]);
+
+  // Thống kê nhanh dùng cho 4 thẻ KPI và FilterTabs
+  const stats = useMemo(() => {
+    return calcStats(allDeadlines);
+  }, [allDeadlines]);
 
   return (
     <div className="tracker-wrapper">
-      {/* Toast Notification */}
+      {/* Toast thông báo */}
       {toastMessage && <div className="toast-notification">{toastMessage}</div>}
 
       {/* Main Header */}
@@ -78,20 +200,36 @@ function DeadlineTrackerContent() {
         <div className="header-left">
           <div className="header-pill">
             <span className="live-dot" />
-            LTWNC - Bài Thực Hành 01 (N2)
+            LTWNC - Bài Thực Hành 02 (N2) • Nâng Cấp Toàn Diện
           </div>
           <h1 className="tracker-title">Student Deadline Tracker</h1>
           <p className="tracker-subtitle">
-            Hệ thống quản lý deadline bài tập cá nhân giúp sinh viên theo dõi các môn học sắp đến hạn nộp
+            Hệ thống quản lý deadline sinh viên với Zustand Pin, Theme Context, Redux-logger, Stress Test 10.000 items và Virtualization.
           </p>
           <div className="tech-badges">
-            <span className="tech-badge">Buổi 1: TypeScript Nâng cao</span>
-            <span className="tech-badge">Buổi 2: Compound Component &amp; Custom Hook</span>
-            <span className="tech-badge">Buổi 3: Redux Toolkit + AsyncThunk</span>
+            <span className="tech-badge">Zustand Pin Store</span>
+            <span className="tech-badge">Theme Context (useMemo)</span>
+            <span className="tech-badge">Redux-Logger Middleware</span>
+            <span className="tech-badge">React.memo + useCallback</span>
+            <span className="tech-badge">useDebounce (300ms)</span>
+            <span className="tech-badge">react-window Virtualization</span>
+            <span className="tech-badge">React.lazy &amp; Suspense</span>
           </div>
         </div>
 
         <div className="header-right">
+          {/* Nút chuyển đổi Light / Dark mode */}
+          <button
+            type="button"
+            className="btn-theme-toggle"
+            onClick={toggleTheme}
+            aria-label="Chuyển đổi giao diện sáng/tối"
+            title="Chuyển đổi Light / Dark theme"
+          >
+            {theme === 'dark' ? '☀️ Giao diện Sáng' : '🌙 Giao diện Tối'}
+          </button>
+
+          {/* Nút mở Modal thêm bài tập mới */}
           <button
             type="button"
             className="btn-add-main"
@@ -105,129 +243,186 @@ function DeadlineTrackerContent() {
         </div>
       </header>
 
-      {/* 4 Thẻ KPI Thống Kê Nhanh (Click để chuyển filter) */}
-      <section aria-label="Thống kê deadline">
-        <DeadlineStats
-          stats={stats}
-          activeFilter={filter}
-          onSelectFilter={handleFilterChange}
-        />
+      {/* Thanh điều khiển tối ưu hiệu năng (Performance Optimization Toolbar) */}
+      <section className="optimization-toolbar" aria-label="Thanh công cụ tối ưu hiệu năng">
+        <div className="toolbar-group">
+          {/* Nút Stress Test 10k items */}
+          <button
+            type="button"
+            className="btn-toolbar btn-stress"
+            onClick={handleGenerateStressTest}
+            title="Sinh 10.000 bài tập ngẫu nhiên để stress test hiệu năng"
+          >
+            ⚡ Tạo 10.000 bài tập mẫu
+          </button>
+
+          {/* Nút Reset */}
+          <button
+            type="button"
+            className="btn-toolbar"
+            onClick={handleResetToDefaults}
+            title="Khôi phục lại 5 bài tập mẫu ban đầu"
+          >
+            ↺ Khôi phục bài tập mẫu
+          </button>
+
+          {/* Nút mở Bảng so sánh Trước & Sau tối ưu */}
+          <button
+            type="button"
+            className="btn-toolbar btn-benchmark"
+            onClick={() => setIsBenchmarkOpen(true)}
+          >
+            📊 So sánh hiệu năng trước/sau
+          </button>
+        </div>
+
+        <div className="toolbar-group">
+          {/* Nút bật/tắt Chế độ xem: Danh sách vs Thống kê Lazy */}
+          <button
+            type="button"
+            className={`btn-toolbar ${viewMode === 'list' ? 'active' : ''}`}
+            onClick={() => setViewMode('list')}
+          >
+            📋 Danh sách
+          </button>
+          <button
+            type="button"
+            className={`btn-toolbar ${viewMode === 'stats' ? 'active' : ''}`}
+            onClick={() => setViewMode('stats')}
+          >
+            📈 Thống kê (React.lazy)
+          </button>
+
+          {/* Toggle Virtualization */}
+          <button
+            type="button"
+            className={`btn-toolbar ${isVirtualizationActive ? 'active' : ''}`}
+            onClick={() => setForceVirtualization(!isVirtualizationActive)}
+            title="Bật/Tắt Ảo hoá bằng react-window"
+          >
+            {isVirtualizationActive ? '⚡ Ảo hoá: Bật' : 'Lưới: Tắt ảo hoá'}
+          </button>
+
+          <span className={`toolbar-pill ${allDeadlines.length >= 1000 ? 'stress-active' : ''}`}>
+            Tổng: {allDeadlines.length.toLocaleString('vi-VN')} bài
+          </span>
+        </div>
       </section>
 
-      {/* Bộ lọc trạng thái & Thanh tìm kiếm */}
-      <section aria-label="Bộ lọc và tìm kiếm">
-        <FilterTabs
-          currentFilter={filter}
-          onFilterChange={handleFilterChange}
-          searchQuery={searchQuery}
-          onSearchChange={handleSearchChange}
-          stats={stats}
-        />
-      </section>
+      {/* View Switch: Danh sách bài tập HOẶC Thống kê Lazy */}
+      {viewMode === 'stats' ? (
+        <section aria-label="Trang Thống kê Lazy">
+          <Suspense fallback={<StatsLoadingFallback />}>
+            <LazyStatsPage items={allDeadlines} onBack={() => setViewMode('list')} />
+          </Suspense>
+        </section>
+      ) : (
+        <>
+          {/* 4 Thẻ KPI Thống Kê Nhanh */}
+          <section aria-label="Thống kê nhanh">
+            <DeadlineStats
+              stats={stats}
+              activeFilter={filter}
+              onSelectFilter={handleFilterChange}
+            />
+          </section>
 
-      {/* Danh sách bài tập */}
-      <main className="tracker-main">
-        {/* Loading Skeletons */}
-        {status === 'loading' && stats.total === 0 ? (
-          <div className="deadlines-grid">
-            {[1, 2, 3, 4].map((n) => (
-              <div key={n} className="deadline-skeleton-card">
-                <div className="skeleton-line skeleton-short" />
-                <div className="skeleton-line skeleton-title" />
-                <div className="skeleton-line skeleton-meta" />
-              </div>
-            ))}
-          </div>
-        ) : filteredDeadlines.length === 0 ? (
-          /* Empty State */
-          <div className="empty-state">
-            <div className="empty-icon-wrapper">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </div>
-            <h3 className="empty-title">Không tìm thấy bài tập nào</h3>
-            <p className="empty-desc">
-              {searchQuery
-                ? `Không có kết quả nào khớp với từ khoá "${searchQuery}". Hãy thử tìm lại.`
-                : filter !== 'all'
-                ? `Hiện tại bạn không có bài tập nào ở trạng thái này.`
-                : 'Bạn chưa có deadline nào. Hãy thêm bài tập mới để bắt đầu quản lý!'}
-            </p>
-            {filter !== 'all' || searchQuery ? (
-              <button
-                type="button"
-                className="btn-empty-reset"
-                onClick={() => {
-                  dispatch(setFilter('all'));
-                  dispatch(setSearchQuery(''));
-                }}
-              >
-                Xem tất cả bài tập
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="btn-empty-add"
-                onClick={() => setIsFormOpen(true)}
-              >
-                + Thêm bài tập đầu tiên
-              </button>
-            )}
-          </div>
-        ) : (
-          /* Yêu cầu 1: Hiển thị danh sách bài tập bằng Compound Component DeadlineCard */
-          <div className="deadlines-grid">
-            {filteredDeadlines.map((item) => (
-              <DeadlineCard
-                key={item.id}
-                deadline={item}
-                onToggle={handleToggle}
-                onDelete={handleDelete}
-              >
-                <DeadlineCard.Header />
-                <DeadlineCard.Body />
-                <DeadlineCard.Actions />
-              </DeadlineCard>
-            ))}
-          </div>
-        )}
-      </main>
+          {/* Bộ lọc trạng thái & Ô tìm kiếm (Debounce 300ms) */}
+          <section aria-label="Bộ lọc và tìm kiếm">
+            <FilterTabs
+              currentFilter={filter}
+              onFilterChange={handleFilterChange}
+              searchQuery={searchInput}
+              onSearchChange={handleSearchChange}
+              stats={stats}
+            />
+          </section>
 
-      {/* Form Modal thêm bài tập */}
+          {/* Danh sách bài tập (Virtualization với react-window) */}
+          <main className="tracker-main">
+            <AssignmentList
+              items={processedDeadlines}
+              status={status}
+              error={error}
+              searchQuery={searchInput}
+              onToggle={handleToggle}
+              onDelete={handleDelete}
+              onTogglePin={handleTogglePin}
+              onResetFilters={() => {
+                dispatch(setFilter('all'));
+                setSearchInput('');
+              }}
+              onOpenCreateForm={() => setIsFormOpen(true)}
+              useVirtualization={isVirtualizationActive}
+            />
+          </main>
+        </>
+      )}
+
+      {/* Form Modal thêm bài tập mới */}
       <DeadlineForm
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
         onSubmit={handleCreate}
       />
 
-      {/* Footer ghi chú kỹ thuật cho giảng viên chấm bài */}
+      {/* Modal Bảng so sánh hiệu năng trước & sau tối ưu */}
+      <BenchmarkModal
+        isOpen={isBenchmarkOpen}
+        onClose={() => setIsBenchmarkOpen(false)}
+      />
+
+      {/* Footer Đối soát Tiêu chí Đề bài */}
       <footer className="tracker-footer">
         <div className="footer-card">
-          <h4>📌 Bảng Đối Soát Yêu Cầu Kỹ Thuật LTWNC (Buổi 1, 2, 3)</h4>
+          <h4>📌 Đối Soát Yêu Cầu Kỹ Thuật - Bài Thực Hành Số 2 (N2)</h4>
           <div className="footer-grid">
             <div className="footer-col">
-              <strong>1. Buổi 1 — TypeScript Nâng Cao:</strong>
+              <strong>Phần A: Quản lý State</strong>
               <ul>
-                <li><code>Generic</code>: <code>ApiResponse&lt;T&gt;</code>, <code>filterItems&lt;T&gt;</code></li>
-                <li><code>Utility Types</code>: <code>Pick</code>, <code>Omit</code>, <code>Partial</code>, <code>Record</code></li>
-                <li><code>Type Guard</code>: <code>isPriority()</code>, <code>isDeadline()</code></li>
+                <li>
+                  <code>Zustand</code>: <code>usePinStore</code> (pinnedIds, togglePin, isPinned), bài tập ghim luôn lên đầu
+                </li>
+                <li>
+                  <code>ThemeContext</code>: Tách riêng, bọc value bằng <code>useMemo</code>, hỗ trợ Light/Dark mode
+                </li>
+                <li>
+                  <code>Middleware Redux</code>: <code>redux-logger</code> kích hoạt độc quyền trong development
+                </li>
               </ul>
             </div>
             <div className="footer-col">
-              <strong>2. Buổi 2 — React Design Pattern:</strong>
+              <strong>Phần B: Tối Ưu Hiệu Năng (4 Kỹ Thuật)</strong>
               <ul>
-                <li><code>Compound Component</code>: <code>DeadlineCard</code> (Header, Body, Actions)</li>
-                <li><code>Context API</code>: Chia sẻ state ngầm định, linh hoạt</li>
-                <li><code>Custom Hook</code>: <code>useDeadlineCountdown()</code></li>
+                <li>
+                  <code>React.memo + useCallback</code>: Ngăn AssignmentCard re-render dư thừa
+                </li>
+                <li>
+                  <code>useDebounce (300ms) + useMemo</code>: Trì hoãn lọc tìm kiếm, gõ phím tức thì
+                </li>
+                <li>
+                  <code>react-window Virtualization</code>: Xử lý mượt 10.000 items, chỉ render ~10 DOM nodes
+                </li>
+                <li>
+                  <code>React.lazy &amp; Suspense</code>: Tách tải module trang Thống kê chi tiết
+                </li>
               </ul>
             </div>
             <div className="footer-col">
-              <strong>3. Buổi 3 — Redux Toolkit:</strong>
+              <strong>Phần C: Kiểm Thử Đầy Đủ</strong>
               <ul>
-                <li><code>Feature-based</code>: <code>features/deadlines/deadlinesSlice.ts</code></li>
-                <li><code>Typed Hooks</code>: <code>useAppDispatch</code>, <code>useAppSelector</code></li>
-                <li><code>createAsyncThunk</code>: Giả lập gọi API lấy data khởi đầu</li>
+                <li>
+                  <code>Unit Test</code>: isOverdue, calcDaysLeft, calcStats, assignmentsSlice reducer
+                </li>
+                <li>
+                  <code>Component Test</code>: AssignmentCard (hiển thị, toggle, pin), DeadlineForm
+                </li>
+                <li>
+                  <code>Bất đồng bộ &amp; Hook</code>: AssignmentList (loading, success, error) &amp; useDebounce
+                </li>
+                <li>
+                  <code>Coverage</code>: &gt;= 70% statements thư mục <code>features/</code>
+                </li>
               </ul>
             </div>
           </div>
@@ -238,12 +433,14 @@ function DeadlineTrackerContent() {
 }
 
 /**
- * TH01App Entry Component được bọc Redux Provider
+ * TH01App Entry Component được bọc Redux Provider & ThemeProvider
  */
 export function TH01App() {
   return (
     <Provider store={store}>
-      <DeadlineTrackerContent />
+      <ThemeProvider>
+        <DeadlineTrackerContent />
+      </ThemeProvider>
     </Provider>
   );
 }

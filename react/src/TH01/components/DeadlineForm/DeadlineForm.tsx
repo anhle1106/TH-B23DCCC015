@@ -100,6 +100,7 @@ export function DeadlineForm({ onSubmit, isOpen, onClose }: DeadlineFormProps) {
             </label>
             <input
               id="input-subject"
+              data-testid="input-subject"
               type="text"
               className={`form-input ${errors.subject ? 'input-error' : ''}`}
               placeholder="VD: Lập trình Web nâng cao"
@@ -137,6 +138,7 @@ export function DeadlineForm({ onSubmit, isOpen, onClose }: DeadlineFormProps) {
             </label>
             <input
               id="input-title"
+              data-testid="input-title"
               type="text"
               className={`form-input ${errors.title ? 'input-error' : ''}`}
               placeholder="VD: Bài thực hành 01 (Redux Toolkit)"
@@ -182,6 +184,7 @@ export function DeadlineForm({ onSubmit, isOpen, onClose }: DeadlineFormProps) {
             </div>
             <input
               id="input-dueDate"
+              data-testid="input-dueDate"
               type="date"
               className={`form-input ${errors.dueDate ? 'input-error' : ''}`}
               value={dueDate}
@@ -258,6 +261,7 @@ export function DeadlineForm({ onSubmit, isOpen, onClose }: DeadlineFormProps) {
             </button>
             <button
               type="submit"
+              data-testid="submit-btn"
               className="btn-submit"
             >
               Tạo bài tập
