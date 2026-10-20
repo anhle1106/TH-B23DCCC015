@@ -1,0 +1,19 @@
+{
+  "name": "lab03-service-connection",
+  "version": "1.0.0",
+  "description": "Lab 3: Ket noi noi dung - Thanh toan hoc phi truc tuyen (INT1448 PTIT)",
+  "main": "fee-service.js",
+  "type": "module",
+  "scripts": {
+    "start:bank": "node bank-service.js",
+    "start:fee": "node fee-service.js",
+    "test:th1": "node scripts/test-th1.js",
+    "test:th2": "node scripts/test-th2.js",
+    "test:th3": "node scripts/test-th3.js",
+    "test:th4": "node scripts/test-th4.js",
+    "test:all": "node scripts/run-all.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
