@@ -1,0 +1,197 @@
+.book-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  position: relative;
+  min-height: 240px;
+}
+
+.book-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  border-color: var(--border-hover, #cbd5e1);
+}
+
+.book-card.borrowed-card {
+  border-color: #3b82f6;
+  background-color: var(--card-borrowed-bg, #f8faff);
+}
+
+.book-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.category-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+}
+
+.badge-cntt {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.badge-kinhte {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.badge-ngoaingu {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.book-year {
+  font-size: 0.8125rem;
+  color: var(--text-muted, #64748b);
+  font-weight: 500;
+}
+
+.book-card-body {
+  flex: 1;
+  margin-bottom: 1rem;
+}
+
+.book-title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--text-heading, #0f172a);
+  margin: 0 0 0.5rem 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.book-author {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.875rem;
+  color: var(--text-muted, #475569);
+  margin: 0 0 0.5rem 0;
+  font-weight: 500;
+}
+
+.author-icon {
+  font-size: 0.875rem;
+}
+
+.book-description {
+  font-size: 0.8125rem;
+  color: var(--text-body, #64748b);
+  line-height: 1.45;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.book-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-color, #f1f5f9);
+  padding-top: 0.875rem;
+  margin-top: auto;
+}
+
+.copies-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.copies-label {
+  font-size: 0.75rem;
+  color: var(--text-muted, #64748b);
+  font-weight: 500;
+}
+
+.copies-count {
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.copies-available {
+  color: #059669;
+}
+
+.copies-empty {
+  color: #dc2626;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+}
+
+.borrowed-status-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.borrowed-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #2563eb;
+  background-color: #dbeafe;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+}
+
+.btn-action {
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-borrow {
+  background-color: #0284c7;
+  color: #ffffff;
+}
+
+.btn-borrow:hover:not(:disabled) {
+  background-color: #0369a1;
+}
+
+.btn-borrow:disabled {
+  background-color: #cbd5e1;
+  color: #64748b;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.btn-return {
+  background-color: #ef4444;
+  color: #ffffff;
+}
+
+.btn-return:hover {
+  background-color: #dc2626;
+}

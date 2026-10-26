@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { MiniLibraryApp } from './MiniLibrary/MiniLibraryApp';
 import { TH01App } from './TH01/TH01App';
 import { TH02App } from './TH02/TH02App';
 import { BT03App } from './BT03/BT03App';
@@ -6,7 +7,7 @@ import { BT04App } from './BT04/BT04App';
 import { BT05App } from './BT05/BT05App';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<'TH01' | 'BT05' | 'BT04' | 'BT03' | 'TH02'>('TH01');
+  const [activeTab, setActiveTab] = useState<'GK' | 'TH01' | 'BT05' | 'BT04' | 'BT03' | 'TH02'>('GK');
 
   return (
     <div className="main-app-container">
@@ -18,6 +19,14 @@ export function App() {
         </div>
 
         <div className="navbar-tabs">
+          <button
+            type="button"
+            className={`nav-tab-btn ${activeTab === 'GK' ? 'active' : ''}`}
+            onClick={() => setActiveTab('GK')}
+          >
+            <span className="tab-indicator cyan" />
+            🔥 Giữa Kỳ: Mini Library
+          </button>
           <button
             type="button"
             className={`nav-tab-btn ${activeTab === 'TH01' ? 'active' : ''}`}
@@ -62,6 +71,7 @@ export function App() {
 
       {/* Dynamic Tab Content */}
       <div className="tab-content">
+        {activeTab === 'GK' && <MiniLibraryApp />}
         {activeTab === 'BT05' && <BT05App />}
         {activeTab === 'BT04' && <BT04App />}
         {activeTab === 'BT03' && <BT03App />}
@@ -163,6 +173,10 @@ export function App() {
 
         .tab-indicator.blue {
           background-color: #2563eb;
+        }
+
+        .tab-indicator.cyan {
+          background-color: #0284c7;
         }
 
         @media (max-width: 768px) {
