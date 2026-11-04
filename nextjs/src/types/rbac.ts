@@ -5,3 +5,4 @@ export type AppAction =
   | 'toggle_complete'
   | 'add_deadline'
   | 'delete_deadline';
+

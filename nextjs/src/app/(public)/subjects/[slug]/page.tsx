@@ -168,3 +168,4 @@ export default async function SubjectDetailPage({ params }: SubjectPageProps) {
     </div>
   );
 }
+

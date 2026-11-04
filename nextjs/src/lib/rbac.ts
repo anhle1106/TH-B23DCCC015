@@ -33,3 +33,4 @@ export function can(role: string | null | undefined, action: AppAction): boolean
 
   return allowedRoles.includes(normalizedRole);
 }
+

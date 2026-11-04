@@ -24,3 +24,4 @@ export interface Deadline {
   completedBy: string[]; // User IDs who marked as completed
   createdAt: string;
 }
+
