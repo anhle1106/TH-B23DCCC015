@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 
-export const alt = 'Mini Library - Thư Viện Sách Khoa CNTT';
+export const alt = 'Class Deadline Hub - Cổng Thông Tin & Quản Lý Deadline Lớp Học PTIT';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -14,35 +14,54 @@ export default async function Image() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          padding: '60px',
-          background: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0369a1 100%)',
+          padding: '60px 80px',
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #881337 100%)',
           color: '#ffffff',
           fontFamily: 'sans-serif',
+          position: 'relative',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div
+              style={{
+                width: '60px',
+                height: '60px',
+                borderRadius: '16px',
+                background: '#dc2626',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '28px',
+                fontWeight: 'bold',
+                color: '#ffffff',
+              }}
+            >
+              PT
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{ fontSize: '28px', fontWeight: '800', letterSpacing: '-0.5px' }}>
+                Class Deadline Hub
+              </span>
+              <span style={{ fontSize: '15px', color: '#cbd5e1' }}>
+                Học Viện Công Nghệ Bưu Chính Viễn Thông (PTIT)
+              </span>
+            </div>
+          </div>
+
           <div
             style={{
-              width: '64px',
-              height: '64px',
-              borderRadius: '16px',
-              background: '#3b82f6',
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '32px',
-              fontWeight: 'bold',
+              padding: '8px 18px',
+              borderRadius: '999px',
+              background: 'rgba(255,255,255,0.1)',
+              border: '1px solid rgba(255,255,255,0.2)',
+              fontSize: '14px',
+              fontWeight: '700',
+              color: '#fca5a5',
             }}
           >
-            📚
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontSize: '32px', fontWeight: '800', letterSpacing: '-0.5px' }}>
-              Mini Library
-            </span>
-            <span style={{ fontSize: '18px', color: '#93c5fd' }}>
-              Khoa Công Nghệ Thông Tin - PTIT
-            </span>
+            Học Kỳ 2026 - Khoa CNTT
           </div>
         </div>
 
@@ -50,31 +69,20 @@ export default async function Image() {
           <div
             style={{
               display: 'flex',
-              padding: '8px 16px',
-              borderRadius: '9999px',
-              background: 'rgba(255, 255, 255, 0.15)',
-              fontSize: '18px',
-              fontWeight: '600',
-              color: '#67e8f9',
-              alignSelf: 'flex-start',
-            }}
-          >
-            Hệ Thống Quản Lý & Tra Cứu Trực Tuyến
-          </div>
-          <h1
-            style={{
-              fontSize: '56px',
+              flexDirection: 'column',
+              fontSize: '52px',
               fontWeight: '900',
               lineHeight: 1.15,
-              margin: 0,
-              maxWidth: '900px',
+              letterSpacing: '-1.5px',
+              color: '#ffffff',
             }}
           >
-            Tra Cứu & Mượn Sách Giáo Trình Chuyên Ngành
-          </h1>
-          <p style={{ fontSize: '22px', color: '#cbd5e1', margin: 0, maxWidth: '800px' }}>
-            Hàng trăm tài liệu CNTT, Kinh tế số, Ngoại ngữ cập nhật mới nhất cho sinh viên và giảng viên.
-          </p>
+            <span>Cổng Thông Tin & Theo Dõi</span>
+            <span>Hạn Nộp Bài Tập Lớp Học</span>
+          </div>
+          <div style={{ display: 'flex', fontSize: '22px', color: '#e2e8f0', maxWidth: '900px' }}>
+            Tra cứu công khai deadline, hỗ trợ sinh viên đánh dấu đã xong và quản trị hạn chót tập trung.
+          </div>
         </div>
 
         <div
@@ -82,23 +90,17 @@ export default async function Image() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            borderTop: '1px solid rgba(255, 255, 255, 0.2)',
-            paddingTop: '24px',
+            borderTop: '1px solid rgba(255,255,255,0.15)',
+            paddingTop: '20px',
+            fontSize: '16px',
+            color: '#94a3b8',
           }}
         >
-          <div style={{ display: 'flex', gap: '32px' }}>
-            <span style={{ fontSize: '18px', color: '#e2e8f0' }}>⚡ Sẵn sàng mượn ngay</span>
-            <span style={{ fontSize: '18px', color: '#e2e8f0' }}>🔒 Phân quyền NextAuth</span>
-            <span style={{ fontSize: '18px', color: '#e2e8f0' }}>🌐 Chuẩn SEO & OpenGraph</span>
-          </div>
-          <span style={{ fontSize: '20px', fontWeight: '700', color: '#60a5fa' }}>
-            library.edu.vn
-          </span>
+          <div style={{ display: 'flex' }}>Next.js 16 • Hybrid SSG & ISR • NextAuth v5 RBAC</div>
+          <div style={{ display: 'flex', color: '#10b981', fontWeight: '700' }}>4 Môn Học • 12 Deadlines</div>
         </div>
       </div>
     ),
-    {
-      ...size,
-    }
+    { ...size }
   );
 }

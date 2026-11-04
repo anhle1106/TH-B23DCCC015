@@ -1,0 +1,42 @@
+[
+  {
+    "id": "sub-01",
+    "code": "INT1434",
+    "name": "Lập trình Web",
+    "slug": "lap-trinh-web",
+    "description": "Phát triển ứng dụng web hiện đại với Next.js App Router, SSR, ISR, SSG, NextAuth và React Server Components.",
+    "lecturer": "TS. Nguyễn Mạnh Hùng",
+    "credits": 3,
+    "icon": "globe"
+  },
+  {
+    "id": "sub-02",
+    "code": "INT1416",
+    "name": "Cơ sở dữ liệu phân tán",
+    "slug": "co-so-du-lieu-phan-tan",
+    "description": "Thiết kế, phân mảnh ngang dọc, quản lý giao dịch 2PC/3PC và tính nhất quán dữ liệu phân tán CAP.",
+    "lecturer": "PGS.TS. Trần Đình Quế",
+    "credits": 3,
+    "icon": "database"
+  },
+  {
+    "id": "sub-03",
+    "code": "INT1306",
+    "name": "Kiến trúc máy tính",
+    "slug": "kien-truc-may-tinh",
+    "description": "Kiến trúc tập lệnh RISC/CISC, đường ống lệnh pipelining, bộ nhớ phân cấp cache và song song đa nhân.",
+    "lecturer": "TS. Lê Bá Dũng",
+    "credits": 3,
+    "icon": "cpu"
+  },
+  {
+    "id": "sub-04",
+    "code": "INT1442",
+    "name": "Học máy & Ứng dụng",
+    "slug": "hoc-may",
+    "description": "Mô hình hồi quy, phân loại, mạng nơ-ron tích chập CNN, Transformer và xử lý dữ liệu lớn.",
+    "lecturer": "TS. Hoàng Văn Hiệp",
+    "credits": 3,
+    "icon": "brain"
+  }
+]

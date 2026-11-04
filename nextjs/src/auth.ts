@@ -8,15 +8,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [
     GitHub({
-      clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET,
+      clientId: process.env.GITHUB_ID || 'mock_github_id',
+      clientSecret: process.env.GITHUB_SECRET || 'mock_github_secret',
       profile(profile) {
         return {
           id: String(profile.id),
           name: profile.name || profile.login,
           email: profile.email || `${profile.login}@users.noreply.github.com`,
           image: profile.avatar_url,
-          role: 'user',
+          role: 'user', // GitHub OAuth default role is 'user'
         };
       },
     }),
@@ -31,7 +31,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
-        const email = String(credentials.email);
+        const email = String(credentials.email).trim().toLowerCase();
         const password = String(credentials.password);
 
         const user = findUserByEmail(email);
@@ -56,4 +56,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   session: {
     strategy: 'jwt',
   },
+  secret: process.env.AUTH_SECRET || 'ptit-class-deadline-hub-super-secret-key-2026',
 });

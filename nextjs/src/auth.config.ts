@@ -10,16 +10,25 @@ export const authConfig = {
       const role = auth?.user?.role;
       const pathname = nextUrl.pathname;
 
+      // Bảo vệ /admin: Chỉ admin được truy cập
       if (pathname.startsWith('/admin')) {
-        if (!isLoggedIn) return false;
+        if (!isLoggedIn) {
+          // Trả về false để NextAuth tự động chuyển hướng về /login?callbackUrl=...
+          return false;
+        }
         if (role !== 'admin') {
-          return Response.redirect(new URL('/unauthorized', nextUrl));
+          // Người dùng đã đăng nhập nhưng không phải admin -> chuyển hướng sang /403
+          return Response.redirect(new URL('/403', nextUrl));
         }
         return true;
       }
 
-      if (pathname.startsWith('/my-shelf')) {
-        return isLoggedIn;
+      // Bảo vệ /dashboard: Phải đăng nhập (cả user và admin)
+      if (pathname.startsWith('/dashboard')) {
+        if (!isLoggedIn) {
+          return false;
+        }
+        return true;
       }
 
       return true;

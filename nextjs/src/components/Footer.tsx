@@ -1,68 +1,83 @@
 import Link from 'next/link';
-import { BookOpen, MapPin, Mail, Phone } from 'lucide-react';
+import { CalendarClock, Shield, Sparkles } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="mt-auto border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-600 dark:text-zinc-400">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center">
-                <BookOpen className="w-4 h-4" />
+    <footer className="mt-auto bg-white border-t border-slate-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Brand Info */}
+          <div className="md:col-span-2 space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-red-600 text-white flex items-center justify-center font-bold text-sm">
+                <CalendarClock className="w-4 h-4" />
               </div>
-              <span className="font-bold text-zinc-900 dark:text-white">Mini Library</span>
+              <span className="text-base font-bold text-slate-900">
+                Class Deadline Hub
+              </span>
             </div>
-            <p className="text-sm leading-relaxed mb-4">
-              Hệ thống tra cứu và quản lý mượn trả tài liệu học tập dành riêng cho sinh viên và giảng viên Khoa CNTT.
+            <p className="text-xs text-slate-500 max-w-md leading-relaxed">
+              Cổng thông tin quản lý hạn nộp bài tập & đồ án học kỳ. Xây dựng bằng Next.js 16
+              App Router, áp dụng chiến lược kết hợp SSG, ISR 60s, SSR, NextAuth v5 và phân quyền RBAC 3 lớp.
             </p>
-            <div className="text-xs text-zinc-500">
-              © 2026 Mini Library Project. Bảo lưu mọi quyền.
+            <p className="text-xs text-slate-400">
+              Học viện Công nghệ Bưu chính Viễn thông (PTIT) • Khoa Công nghệ Thông tin
+            </p>
+          </div>
+
+          {/* Quick links */}
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-3">
+              Chiến Lược Render
+            </h4>
+            <ul className="space-y-2 text-xs text-slate-600">
+              <li>
+                <Link href="/" className="hover:text-red-600 transition-colors">
+                  Trang chủ (SSG)
+                </Link>
+              </li>
+              <li>
+                <Link href="/deadlines" className="hover:text-red-600 transition-colors">
+                  Deadlines (ISR 60s)
+                </Link>
+              </li>
+              <li>
+                <Link href="/subjects/lap-trinh-web" className="hover:text-red-600 transition-colors">
+                  Môn học (SSG)
+                </Link>
+              </li>
+              <li>
+                <Link href="/dashboard" className="hover:text-red-600 transition-colors">
+                  Dashboard (SSR)
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Security & Accounts */}
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-3">
+              Tài Khoản Demo Bắt Buộc
+            </h4>
+            <div className="space-y-2 text-xs text-slate-600">
+              <div className="p-2 bg-slate-50 rounded-lg border border-slate-100">
+                <p className="font-semibold text-slate-800">Admin (Lớp trưởng):</p>
+                <code className="text-[11px] text-purple-700">admin@ptit.edu.vn / admin123</code>
+              </div>
+              <div className="p-2 bg-slate-50 rounded-lg border border-slate-100">
+                <p className="font-semibold text-slate-800">User (Sinh viên):</p>
+                <code className="text-[11px] text-blue-700">sv@ptit.edu.vn / sv123456</code>
+              </div>
             </div>
           </div>
+        </div>
 
-          <div>
-            <h3 className="font-semibold text-zinc-900 dark:text-white mb-3 text-sm">Liên Kết Nhanh</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                  Trang Chủ & Danh Mục
-                </Link>
-              </li>
-              <li>
-                <Link href="/my-shelf" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                  Tủ Sách Của Tôi
-                </Link>
-              </li>
-              <li>
-                <Link href="/admin/books" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                  Khu Vực Quản Trị
-                </Link>
-              </li>
-              <li>
-                <Link href="/login" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                  Cổng Đăng Nhập
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-zinc-900 dark:text-white mb-3 text-sm">Thông Tin Thư Viện</h3>
-            <ul className="space-y-2.5 text-sm">
-              <li className="flex items-start gap-2">
-                <MapPin className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
-                <span>Tầng 3, Nhà A1, Học viện Công nghệ Bưu chính Viễn thông</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-blue-600 shrink-0" />
-                <span>thuvien@library.edu.vn</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-blue-600 shrink-0" />
-                <span>024.3756.2999 (Giờ hành chính)</span>
-              </li>
-            </ul>
+        <div className="mt-8 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+          <p>© 2026 PTIT Class Deadline Hub. Bài tập Buổi 7 & Buổi 8.</p>
+          <div className="flex items-center gap-4">
+            <span className="inline-flex items-center gap-1 text-slate-500">
+              <Shield className="w-3.5 h-3.5 text-emerald-600" /> RBAC 3-Layer Protected
+            </span>
           </div>
         </div>
       </div>

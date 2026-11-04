@@ -1,29 +1,31 @@
 import bcrypt from 'bcryptjs';
-import type { UserRole } from '@/types/next-auth';
+import type { UserRole } from '@/types/rbac';
 
 export interface AppUser {
   id: string;
   name: string;
   email: string;
   passwordHash: string;
-  role: UserRole;
+  role: 'admin' | 'user';
   avatarUrl?: string;
 }
 
 export const USERS: AppUser[] = [
   {
-    id: 'user-admin-01',
-    name: 'Quản Trị Viên Kho Sách',
-    email: 'admin@library.edu.vn',
-    passwordHash: bcrypt.hashSync('Admin@123', 10),
+    id: 'ptit-admin-01',
+    name: 'Lớp Trưởng (Admin)',
+    email: 'admin@ptit.edu.vn',
+    passwordHash: bcrypt.hashSync('admin123', 10),
     role: 'admin',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
   },
   {
-    id: 'user-student-01',
-    name: 'Nguyễn Văn Sinh Viên',
-    email: 'student@library.edu.vn',
-    passwordHash: bcrypt.hashSync('Student@123', 10),
+    id: 'ptit-sv-01',
+    name: 'Sinh Viên PTIT',
+    email: 'sv@ptit.edu.vn',
+    passwordHash: bcrypt.hashSync('sv123456', 10),
     role: 'user',
+    avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
   },
 ];
 
